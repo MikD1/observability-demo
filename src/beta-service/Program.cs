@@ -26,11 +26,11 @@ app.UseSwaggerUI();
 
 app.MapGet("/api/method", async () =>
 {
-    HttpClient httpClient = new() { BaseAddress = new Uri("http://localhost:5002") };
+    HttpClient httpClient = new() { BaseAddress = new Uri("http://localhost:5003") };
     HttpResponseMessage response = await httpClient.GetAsync("api/method");
     string responseText = await response.Content.ReadAsStringAsync();
     
-    string result = $"AlphaService - OK. {responseText}";
+    string result = $"BetaService - OK. {responseText}";
     return Results.Ok(result);
 });
 

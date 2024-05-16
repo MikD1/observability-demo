@@ -24,14 +24,6 @@ WebApplication app = builder.Build();
 app.UseSwagger();
 app.UseSwaggerUI();
 
-app.MapGet("/api/method", async () =>
-{
-    HttpClient httpClient = new() { BaseAddress = new Uri("http://localhost:5002") };
-    HttpResponseMessage response = await httpClient.GetAsync("api/method");
-    string responseText = await response.Content.ReadAsStringAsync();
-    
-    string result = $"AlphaService - OK. {responseText}";
-    return Results.Ok(result);
-});
+app.MapGet("/api/method", () => Results.Ok("DeltaService - OK"));
 
 app.Run();
