@@ -1,4 +1,12 @@
 services:
+  jaeger:
+    image: jaegertracing/all-in-one
+    container_name: jaeger
+    ports:
+      - "16686:16686"
+      - "4317:4317"
+      - "4318:4318"
+
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
     container_name: zookeeper
@@ -35,3 +43,27 @@ services:
       - KAFKA_CLUSTERS_0_NAME=local
       - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:29092
       - KAFKA_CLUSTERS_0_ZOOKEEPER=zookeeper:2181
+  
+  alpha-service:
+    build: src/alpha-service
+    container_name: alpha-service
+    ports:
+      - 5001:8080
+  
+  beta-service:
+    build: src/beta-service
+    container_name: beta-service
+    ports:
+      - 5002:8080
+
+  gamma-service:
+    build: src/gamma-service
+    container_name: gamma-service
+    ports:
+      - 5003:8080
+  
+  delta-service:
+    build: src/delta-service
+    container_name: delta-service
+    ports:
+      - 5004:8080

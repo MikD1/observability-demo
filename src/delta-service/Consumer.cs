@@ -4,24 +4,36 @@ namespace DeltaService;
 
 public class Consumer
 {
-    public void Run()
+    public void Run(CancellationToken cancellationToken = default)
     {
         ConsumerConfig config = new()
         {
-            BootstrapServers = "localhost:9092",
+            BootstrapServers = "kafka:29092",
             GroupId = "group.delta",
             AutoOffsetReset = AutoOffsetReset.Earliest
         };
 
-        Task.Factory.StartNew(() =>
+        Task.Factory.StartNew(async () =>
         {
             using IConsumer<string, string>? consumer = new ConsumerBuilder<string, string>(config).Build();
             consumer.Subscribe("test.topic");
-            while (true)
+
+            Console.WriteLine("Start consumer loop");
+            while (!cancellationToken.IsCancellationRequested)
             {
-                ConsumeResult<string, string>? result = consumer.Consume();
-                Console.WriteLine($"{result.Message.Key} - {result.Message.Value}");
+                try
+                {
+                    ConsumeResult<string, string>? result = consumer.Consume(cancellationToken);
+                    if (result is not null)
+                    {
+                        Console.WriteLine($"{result.Message.Key} - {result.Message.Value}");
+                    }
+                }
+                catch
+                {
+                    await Task.Delay(100, cancellationToken);
+                }
             }
-        });
+        }, cancellationToken);
     }
 }

@@ -1,3 +1,4 @@
+using Confluent.Kafka.Extensions.OpenTelemetry;
 using GammaService;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
@@ -14,7 +15,8 @@ builder.Services.AddOpenTelemetry()
         .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService(serviceName))
         .AddAspNetCoreInstrumentation()
         .AddHttpClientInstrumentation()
-        .AddOtlpExporter());
+        .AddConfluentKafkaInstrumentation()
+        .AddOtlpExporter(o => o.Endpoint = new Uri("http://jaeger:4317")));
 
 WebApplication app = builder.Build();
 app.UseSwagger();

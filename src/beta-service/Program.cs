@@ -13,7 +13,7 @@ builder.Services.AddOpenTelemetry()
         .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService(serviceName))
         .AddAspNetCoreInstrumentation()
         .AddHttpClientInstrumentation()
-        .AddOtlpExporter());
+        .AddOtlpExporter(o => o.Endpoint = new Uri("http://jaeger:4317")));
 
 WebApplication app = builder.Build();
 app.UseSwagger();
@@ -23,10 +23,10 @@ app.MapGet("/api/method", async () =>
 {
     using HttpClient httpClient = new();
     
-    HttpResponseMessage response = await httpClient.GetAsync("http://localhost:5003/api/method");
+    HttpResponseMessage response = await httpClient.GetAsync("http://gamma-service:8080/api/method");
     response.EnsureSuccessStatusCode();
     
-    response = await httpClient.GetAsync("http://localhost:5004/api/method");
+    response = await httpClient.GetAsync("http://delta-service:8080/api/method");
     response.EnsureSuccessStatusCode();
 
     return Results.Ok();

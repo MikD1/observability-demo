@@ -1,4 +1,5 @@
 using Confluent.Kafka;
+using Confluent.Kafka.Extensions.Diagnostics;
 
 namespace AlphaService;
 
@@ -8,10 +9,11 @@ public class Producer
     {
         ProducerConfig config = new()
         {
-            BootstrapServers = "localhost:9092",
+            BootstrapServers = "kafka:29092"
         };
 
-        using IProducer<string, string>? producer = new ProducerBuilder<string, string>(config).Build();
+        using IProducer<string, string> producer =
+            new ProducerBuilder<string, string>(config).BuildWithInstrumentation();
         await producer.ProduceAsync("test.topic", new Message<string, string>
             { Key = Guid.NewGuid().ToString(), Value = message });
     }

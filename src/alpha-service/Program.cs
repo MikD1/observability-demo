@@ -1,4 +1,5 @@
 using AlphaService;
+using Confluent.Kafka.Extensions.OpenTelemetry;
 using Microsoft.AspNetCore.Mvc;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
@@ -15,7 +16,9 @@ builder.Services.AddOpenTelemetry()
         .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService(serviceName))
         .AddAspNetCoreInstrumentation()
         .AddHttpClientInstrumentation()
-        .AddOtlpExporter());
+        .AddConfluentKafkaInstrumentation()
+        .AddOtlpExporter(o => o.Endpoint = new Uri("http://jaeger:4317")));
+
 builder.Services.AddSingleton(TracerProvider.Default.GetTracer(serviceName));
 builder.Services.AddScoped<Module1>();
 builder.Services.AddScoped<Module2>();
@@ -29,7 +32,7 @@ app.UseSwaggerUI();
 app.MapGet("/api/method", async () =>
 {
     using HttpClient httpClient = new();
-    HttpResponseMessage response = await httpClient.GetAsync("http://localhost:5002/api/method");
+    HttpResponseMessage response = await httpClient.GetAsync("http://beta-service:8080/api/method");
     response.EnsureSuccessStatusCode();
     return Results.Ok();
 });
