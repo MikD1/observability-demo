@@ -1,4 +1,5 @@
 using AlphaService;
+using Microsoft.AspNetCore.Mvc;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 
@@ -36,6 +37,13 @@ app.MapGet("/api/method", async () =>
 app.MapGet("/api/modular", (Module1 module1) =>
 {
     module1.Run();
+    return Results.Ok();
+});
+
+app.MapPost("/api/kafka", async ([FromBody] string message) =>
+{
+    Producer producer = new();
+    await producer.SendMessage(message);
     return Results.Ok();
 });
 

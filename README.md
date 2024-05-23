@@ -49,3 +49,19 @@ flowchart LR
   m1 --> m3
   m1 --> m4
 ```
+
+### Kafka
+
+```mermaid
+flowchart LR
+  start((S))
+  kafka[[Kafka]]
+  alpha[Alpha Service]
+  gamma[Gamma Service]
+  delta[Delta Service]
+
+  start -->|api/kafka| alpha
+  alpha -->|message| kafka
+  kafka -->|message| gamma
+  kafka -->|message| delta
+```

@@ -1,3 +1,4 @@
+using GammaService;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 
@@ -21,4 +22,6 @@ app.UseSwaggerUI();
 
 app.MapGet("/api/method", () => Results.Ok());
 
+Consumer consumer = new();
+consumer.Run();
 app.Run();
