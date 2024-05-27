@@ -1,4 +1,5 @@
 using Confluent.Kafka;
+using Confluent.Kafka.Extensions.Diagnostics;
 
 namespace GammaService;
 
@@ -23,11 +24,15 @@ public class Consumer
             {
                 try
                 {
-                    ConsumeResult<string, string>? result = consumer.Consume(cancellationToken);
-                    if (result is not null)
+                    await consumer.ConsumeWithInstrumentation((result, _) =>
                     {
-                        Console.WriteLine($"{result.Message.Key} - {result.Message.Value}");
-                    }
+                        if (result is not null)
+                        {
+                            Console.WriteLine($"{result.Message.Key} - {result.Message.Value}");
+                        }
+
+                        return Task.CompletedTask;
+                    }, cancellationToken);
                 }
                 catch
                 {
